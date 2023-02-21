@@ -72,10 +72,16 @@ def getSettings(index, host, username="", password="", sslEnabled = False):
     ## 分片数默认和源集群索引保持一致。
     number_of_shards = settingsDict[index]["settings"]["index"]["number_of_shards"]
     ## 副本数默认为0。
-    number_of_replicas = DEFAULT_REPLICAS
+    # number_of_replicas = DEFAULT_REPLICAS
     # number_of_replicas = settingsDict[index]["settings"]["index"]["number_of_replicas"]
 
-    newSetting = "\"settings\": {\"number_of_shards\": %s, \"number_of_replicas\": %s}" % (number_of_shards, number_of_replicas)
+    settingsDict[index]["settings"]["index"]["number_of_replicas"] = DEFAULT_REPLICAS
+    del settingsDict[index]["settings"]["index"]["provided_name"]
+    del settingsDict[index]["settings"]["index"]["uuid"]
+    del settingsDict[index]["settings"]["index"]["creation_date"]
+    del settingsDict[index]["settings"]["index"]["version"]
+    settings = json.dumps(settingsDict[index]["settings"]["index"])
+    newSetting = "\"settings\":" + settings
     return newSetting
 def getMapping(index, host, username="", password="", sslEnabled = False):
     endpoint = "/" + index + "/_mapping"
